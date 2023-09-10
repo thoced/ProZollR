@@ -20,6 +20,11 @@ public class Communication implements IDAO<Communication> {
     private Date timeEnd;
     private int duration; // en secondes
     private String type;
+    private int roaming;
+
+    public enum TYPE{
+        VOICE,SMS
+    }
 
     // Constructeur
 
@@ -29,7 +34,7 @@ public class Communication implements IDAO<Communication> {
         this.timeEnd = new Date();
     }
 
-    public Communication(int id,String caller, String called, Date timeStart, Date timeEnd, int duration, String type) {
+    public Communication(int id,String caller, String called, Date timeStart, Date timeEnd, int duration, String type,int roaming) {
         this.id = id;
         this.caller = caller;
         this.called = called;
@@ -37,6 +42,7 @@ public class Communication implements IDAO<Communication> {
         this.timeEnd = timeEnd;
         this.duration = duration;
         this.type = type;
+        this.roaming = roaming;
     }
 
     // Getters et Setters
@@ -97,6 +103,14 @@ public class Communication implements IDAO<Communication> {
         this.type = type;
     }
 
+    public int isRoaming() {
+        return roaming;
+    }
+
+    public void setRoaming(int roaming) {
+        this.roaming = roaming;
+    }
+
     @Override
     public void Create() throws SQLException {
         // creation de la table Communication, si elle n'existe pas
@@ -107,7 +121,8 @@ public class Communication implements IDAO<Communication> {
                 "    timeStart DATETIME,\n" +
                 "    timeEnd DATETIME,\n" +
                 "    duration INTEGER,\n" +
-                "    type TEXT\n" +
+                "    type TEXT,\n" +
+                "    roaming INTEGER\n" +
                 ");\n";
 
         SingletonDAO.getInstanceConnection().createStatement().execute(sql);
@@ -115,8 +130,8 @@ public class Communication implements IDAO<Communication> {
 
     @Override
     public void Insert() throws SQLException {
-        String sql = "INSERT INTO COMMUNICATION (caller, called, timeStart, timeEnd, duration, type)\n" +
-                "VALUES (?, ?, ?, ?, ?, ?);\n";
+        String sql = "INSERT INTO COMMUNICATION (caller, called, timeStart, timeEnd, duration, type,roaming)\n" +
+                "VALUES (?, ?, ?, ?, ?, ?,?);\n";
 
         PreparedStatement statement  = SingletonDAO.getInstanceConnection().prepareStatement(sql);
         statement.setString(1, caller);
@@ -125,6 +140,8 @@ public class Communication implements IDAO<Communication> {
         statement.setTimestamp(4, new java.sql.Timestamp(timeEnd.getTime()));
         statement.setInt(5, duration);
         statement.setString(6, type);
+        statement.setInt(7, roaming);
+
 
         statement.executeUpdate();
     }
@@ -132,7 +149,7 @@ public class Communication implements IDAO<Communication> {
     @Override
     public void Update() throws SQLException, UpdateDBException {
         String sql = "UPDATE COMMUNICATION \n" +
-                "SET caller = ?, called = ?, timeStart = ?, timeEnd = ?, duration = ?, type = ?\n" +
+                "SET caller = ?, called = ?, timeStart = ?, timeEnd = ?, duration = ?, type = ?, roaming = ?\n" +
                 "WHERE id = ?;\n";
 
         try (PreparedStatement preparedStatement = SingletonDAO.getInstanceConnection().prepareStatement(sql)) {
@@ -142,7 +159,8 @@ public class Communication implements IDAO<Communication> {
             preparedStatement.setTimestamp(4, new java.sql.Timestamp(timeEnd.getTime()));
             preparedStatement.setInt(5, duration);
             preparedStatement.setString(6, type);
-            preparedStatement.setInt(7, id);
+            preparedStatement.setInt(7,roaming);
+            preparedStatement.setInt(8, id);
 
             int rowCount = preparedStatement.executeUpdate();
             if(rowCount == 0){
@@ -187,8 +205,9 @@ public class Communication implements IDAO<Communication> {
             Date timeEnd = resultSet.getTimestamp("timeEnd");
             int duration = resultSet.getInt("duration");
             String type = resultSet.getString("type");
+            int roaming = resultSet.getInt("roaming");
 
-            Communication communication = new Communication(id,caller,called,timeStart,timeEnd,duration,type);
+            Communication communication = new Communication(id,caller,called,timeStart,timeEnd,duration,type,roaming);
 
             communications.add(communication);
         }
@@ -197,3 +216,4 @@ public class Communication implements IDAO<Communication> {
 
     }
 }
+
