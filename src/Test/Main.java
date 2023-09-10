@@ -1,5 +1,6 @@
 package Test;
 
+import Dao.SingletonDAO;
 import Models.Proximus.*;
 import Parsers.Proximus.ProximusParser;
 
@@ -19,12 +20,12 @@ public class Main {
 
         // affichage
         ListIterator<ProximusNPSubscrivers> list = proximus.getNpSubscribersCollection().listIterator();
-        while(list.hasNext()){
+        while (list.hasNext()) {
             ProximusNPSubscrivers call = list.next();
             System.out.println(call.getCalledCallingNr());
         }
 
-
+        SingletonDAO.getInstanceConnection();
     }
 }
 
