@@ -1,10 +1,13 @@
 package Test;
 
 import Dao.SingletonDAO;
+import Models.Communication;
 import Models.Proximus.*;
 import Parsers.Proximus.ProximusParser;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.ListIterator;
 
 public class Main {
@@ -25,7 +28,26 @@ public class Main {
             System.out.println(call.getCalledCallingNr());
         }
 
-        SingletonDAO.getInstanceConnection();
+        Communication communication = new Communication();
+        try {
+            communication.Create();
+
+            List<Communication> coms = communication.Select("Caller = '32494386461'");
+            ListIterator<Communication> listIte = coms.listIterator();
+            while(listIte.hasNext())
+            {
+                Communication com = listIte.next();
+                System.out.println(com.getCalled());
+            }
+
+
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }
 
