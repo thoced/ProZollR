@@ -10,7 +10,12 @@ public class PhoneNumber {
     private List<Person> persons;
 
     // Constructeur
-    public PhoneNumber(String countryCode, String areaCode, String number,List<Person> persons) {
+
+
+    public PhoneNumber() {
+    }
+
+    public PhoneNumber(String countryCode, String areaCode, String number, List<Person> persons) {
         this.countryCode = countryCode;
         this.areaCode = areaCode;
         this.number = number;

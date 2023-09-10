@@ -12,6 +12,11 @@ public class Person {
 
 
     // Constructeur
+
+
+    public Person() {
+    }
+
     public Person(String firstname, String name, String address, String number, String town, String zipcode) {
         this.firstname = firstname;
         this.name = name;
