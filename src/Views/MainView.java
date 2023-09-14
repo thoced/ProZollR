@@ -1,5 +1,6 @@
 package Views;
 
+import Models.Case.CaseInfo;
 import Models.Communication;
 import javafx.application .Application;
 import javafx.scene.Scene;
@@ -15,8 +16,23 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class MainView extends Application {
+
+
+    @Override
+    public void init() throws Exception {
+        super.init();
+
+        // génération des tables
+        Communication communication = new Communication();
+        communication.Create();
+
+        CaseInfo caseInfo =  new CaseInfo();
+        caseInfo.Create();
+
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -30,14 +46,26 @@ public class MainView extends Application {
 
         // Création du premier menu "File" avec les items "Ouvrir" et "Fermer"
         Menu fileMenu = new Menu("File");
-        MenuItem ouvrirItem = new MenuItem("Ouvrir");
+        MenuItem newCaseItem = new MenuItem("Créer un nouveau dossier");
         MenuItem fermerItem = new MenuItem("Fermer");
-        fileMenu.getItems().addAll(ouvrirItem, fermerItem);
+        fileMenu.getItems().addAll(newCaseItem, fermerItem);
 
         // Création du second menu "Options" avec l'item "Importer"
         Menu optionsMenu = new Menu("Options");
         MenuItem importerItem = new MenuItem("Importer");
         optionsMenu.getItems().add(importerItem);
+
+        newCaseItem.setOnAction(event -> {
+            CaseDialog dialog = new CaseDialog();
+            Optional<CaseInfo> result =  dialog.showAndWait();
+            result.ifPresent(caseInfo -> {
+                try {
+                    caseInfo.Insert();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        });
 
         // Ajout des menus au MenuBar
         menuBar.getMenus().addAll(fileMenu, optionsMenu);
